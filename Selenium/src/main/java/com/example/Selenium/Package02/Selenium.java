@@ -193,10 +193,10 @@ public class Selenium extends TelegramLongPollingBot {
             int countdownDuration = 30;
             SendMessage message = new SendMessage();
             message.setChatId("1159534870"); // update.getMessage().getChatId().toString()
-            int zero = 30;
+            int zero = countdownDuration;
             for (int second = 0; second <= countdownDuration; second++) {
-                zero = second;
-                System.out.println(countdownDuration - second);
+                zero = countdownDuration - second;
+                System.out.println(zero);
 
                 Thread.sleep(1000);
 
@@ -248,13 +248,12 @@ public class Selenium extends TelegramLongPollingBot {
                     }
                 }
                 System.out.println("---------------------");
-            }if(zero ==0){
+            }if (zero == 0) {
                 message.setText("End of time to solove captcha");
                 execute(message);
                 driver.close();
                 return ResponseEntity.ok(new String("End of time to solove captcha"));
             }
-
 
         } catch (Exception e) {
             System.out.println("Non display captcha");
