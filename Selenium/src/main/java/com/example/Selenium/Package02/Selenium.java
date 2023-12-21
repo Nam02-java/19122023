@@ -85,7 +85,7 @@ public class Selenium extends TelegramLongPollingBot {
     public ResponseEntity<?> LastAPI(@RequestParam Map<String, String> params) throws InterruptedException, IOException, TelegramApiException {
         List<WebElement> element_solve;
         String user_name = "nam03test"; // mô phỏng tên user
-        String user_password = "Mk123namnam"; // mô phỏng password user
+        String user_password = "Matkhau123"; // mô phỏng password user
         JavascriptExecutor js;
         WebElement webElement;
         WebDriverWait wait;
@@ -140,7 +140,13 @@ public class Selenium extends TelegramLongPollingBot {
         driver.findElement(By.xpath("//ins[@class='iCheck-helper']")).click();
         driver.findElement(By.xpath("//input[@id='btnLogin']")).click();
 
-        driver.get("https://ttsfree.com/vn");
+
+        try {
+            wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("az.com"))).click();
+        } catch (Exception exception) {
+            driver.get("https://ttsfree.com/vn");
+        }
 
         ((JavascriptExecutor) driver).executeScript("var images = document.getElementsByTagName('img'); for(var i = 0; i < images.length; i++) { images[i].setAttribute('hidden', 'true'); }");
         ((JavascriptExecutor) driver).executeScript("var images = document.querySelectorAll('img[id=captcha_image]'); for(var i = 0; i < images.length; i++) { if(images[i].src.startsWith('https://ttsfree.com/voice/captcha.php?sign=?')) { images[i].removeAttribute('hidden'); } }");
@@ -148,7 +154,6 @@ public class Selenium extends TelegramLongPollingBot {
         js = (JavascriptExecutor) driver;
         webElement = driver.findElement(By.xpath("//*[@id=\"input_text\"]"));
         js.executeScript("arguments[0].scrollIntoView();", webElement);
-
 
         latch = new CountDownLatch(1);
         Thread threadCheckAdsTOP = new Thread(new CheckAdsTOP(driver, latch));
@@ -166,6 +171,11 @@ public class Selenium extends TelegramLongPollingBot {
         latch.await();
 
         driver.findElement(By.xpath("//textarea[@id='input_text']")).sendKeys(params.get("Text"));
+
+        latch = new CountDownLatch(1);
+        threadCheckHandAD = new Thread(new CheckHandAD(driver, latch));
+        threadCheckHandAD.start();
+        latch.await();
 
         if (params.get("Voice").equals("Female")) {
             driver.findElement(By.xpath("(//label[@for='radioPrimaryvi-VN'])[1]")).click();
@@ -272,7 +282,6 @@ public class Selenium extends TelegramLongPollingBot {
             System.out.println("Non display captcha");
         }
 
-
         if (flag == true) {
             flag = false;
             System.out.println("flag == true");
@@ -280,7 +289,7 @@ public class Selenium extends TelegramLongPollingBot {
                 wait = new WebDriverWait(driver, Duration.ofSeconds(5));
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("laptopaz.com"))).click();
             } catch (Exception exception) {
-                
+
             }
         } else {
         }
@@ -300,8 +309,6 @@ public class Selenium extends TelegramLongPollingBot {
         Thread threadCheckHostAD = new Thread(new CheckHostAD(driver, latch));
         threadCheckHostAD.start();
         latch.await();
-
-
         /**
          * đổi tên file theo yêu cầu user ( đơn luồng thì hoạt động oke , đa luồng thì lỗi -> đang nghiên cứu login 1 lúc có request cùng đổi để đảm bảo không có lỗi xảy ra
          * đang nghiên cứu để update
@@ -316,8 +323,12 @@ public class Selenium extends TelegramLongPollingBot {
 //            File newFile = new File(folder, newFileName);
 //            latestFile.renameTo(newFile);
 //        }
- 
-        driver.close();
+        try {
+            wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("az.com"))).click();
+        } catch (Exception exception) {
+            driver.close();
+        }
         return ResponseEntity.ok(new String("Downloaded successfully"));
     }
 }
