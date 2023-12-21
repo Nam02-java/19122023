@@ -85,7 +85,7 @@ public class Selenium extends TelegramLongPollingBot {
     public ResponseEntity<?> LastAPI(@RequestParam Map<String, String> params) throws InterruptedException, IOException, TelegramApiException {
         List<WebElement> element_solve;
         String user_name = "nam03test"; // mô phỏng tên user
-        String user_password = "MK123nam"; // mô phỏng password user
+        String user_password = "Mk123namnam"; // mô phỏng password user
         JavascriptExecutor js;
         WebElement webElement;
         WebDriverWait wait;
@@ -175,6 +175,7 @@ public class Selenium extends TelegramLongPollingBot {
 
         driver.findElement(By.xpath("//a[@class='btn mb-2 lg action-1 text-white convert-now']")).click();
 
+        Boolean flag = false;
         try {
             wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='alert alert-danger alert-dismissable']"))).isDisplayed();
@@ -220,6 +221,11 @@ public class Selenium extends TelegramLongPollingBot {
                         continue;
                     }
 
+                    latch = new CountDownLatch(1);
+                    threadCheckHandAD = new Thread(new CheckHandAD(driver, latch));
+                    threadCheckHandAD.start();
+                    latch.await();
+
                     driver.findElement(By.xpath("(//input[@id='captcha_input'])[1]")).sendKeys(text);
                     element_solve = driver.findElements(By.xpath("(//img[@title='Ad.Plus Advertising'])[1]"));
                     if (element_solve.size() > 0 && element_solve.get(0).isDisplayed()) {
@@ -237,6 +243,8 @@ public class Selenium extends TelegramLongPollingBot {
                         continue;
 
                     } catch (Exception exception) {
+                        flag = true;
+                        text = null;
                         message.setText("Valid captcha code");
                         execute(message);
 
@@ -248,20 +256,46 @@ public class Selenium extends TelegramLongPollingBot {
                     }
                 }
                 System.out.println("---------------------");
-            }if (zero == 0) {
+            }
+            System.out.println("count here");
+            System.out.println(zero);
+            if (zero == 0) {
+                System.out.println("count ");
                 message.setText("End of time to solove captcha");
                 execute(message);
                 driver.close();
                 return ResponseEntity.ok(new String("End of time to solove captcha"));
             }
 
+
         } catch (Exception e) {
             System.out.println("Non display captcha");
         }
 
+
+        if (flag == true) {
+            flag = false;
+            System.out.println("flag == true");
+            try {
+                wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("laptopaz.com"))).click();
+            } catch (Exception exception) {
+                
+            }
+        } else {
+        }
+
+        latch = new CountDownLatch(1);
+        threadCheckHandAD = new Thread(new CheckHandAD(driver, latch));
+        threadCheckHandAD.start();
+        latch.await();
+
+        js = (JavascriptExecutor) driver;
+        webElement = driver.findElement(By.xpath("//*[@id=\"input_text\"]"));
+        js.executeScript("arguments[0].scrollIntoView();", webElement);
+
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"progessResults\"]/div[2]/center[1]/div/a"))).click();
-        System.out.println("clicked download");
         latch = new CountDownLatch(1);
         Thread threadCheckHostAD = new Thread(new CheckHostAD(driver, latch));
         threadCheckHostAD.start();
@@ -282,11 +316,11 @@ public class Selenium extends TelegramLongPollingBot {
 //            File newFile = new File(folder, newFileName);
 //            latestFile.renameTo(newFile);
 //        }
+ 
         driver.close();
         return ResponseEntity.ok(new String("Downloaded successfully"));
     }
 }
-
 
 /**
  * cd C:\Program Files\Google\Chrome\Application
