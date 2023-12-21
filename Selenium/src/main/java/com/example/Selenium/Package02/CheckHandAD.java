@@ -19,7 +19,7 @@ public class CheckHandAD implements Runnable {
     public CheckHandAD(WebDriver driver, CountDownLatch countDownLatch) {
         this.driver = driver;
         this.countDownLatch = countDownLatch;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(2));
     }
 
     public CheckHandAD(WebDriver driver, CountDownLatch countDownLatch, WebDriverWait wait) {
